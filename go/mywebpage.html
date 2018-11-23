@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>mychattingroom by hongyaohongyao</title>
+<script>
+
+window.onload=function(){
+	var conn;
+	var b=prompt("Be a object:");
+	var nickname;
+	if(!b){
+		nickname="Ghost";
+	}else{nickname=b;}
+	document.getElementById("nickname").innerHTML=nickname;
+    document.getElementById("form").onsubmit = function () {
+        if (!conn) {
+            return false;
+        }
+        if (!msg.value) {
+            return false;
+        }
+        conn.send(nickname+":"+msg.value);
+        msg.value = "";
+        return false;
+    };
+	var msg = document.getElementById("msg");
+	var box = document.getElementById("box");
+	if (window["WebSocket"]) {
+        conn = new WebSocket("ws://" + document.location.host + "/ws");
+        conn.onclose = function (evt) {
+            var item = document.createElement("div");
+            item.innerHTML = "<b>Connection closed.</b>";
+            box.appendChild(item);
+        };
+        conn.onmessage = function (evt) {
+            var messages = evt.data.split('\n');
+            for (var i = 0; i < messages.length; i++) {
+                var item = document.createElement("div");
+                item.innerHTML = messages[i];
+                box.appendChild(item);
+            }
+        };
+    } else {
+        var item = document.createElement("div");
+        item.innerHTML = "<b>Your browser does not support WebSockets.</b>";
+        box.appendChild(item);
+    }
+	
+}
+
+</script>
+</head>		
+<form id="form">
+<b id="nickname">ghost</b>:<input type="text" id="msg">
+<button type="submit">send</button><br>
+</form>
+<body>
+<div><br><b>message:<b></div>
+<div id="box"></div>
+</body>
+</html>
