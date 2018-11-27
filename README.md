@@ -11,3 +11,6 @@ learner's project
 #### v1
 - realize the basic function
 - add naming function on the basis of the example
+#### v2
+- a simple login function
+- using a ready-made webpage..
