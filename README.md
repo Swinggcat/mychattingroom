@@ -12,5 +12,5 @@ learner's project
 - realize the basic function
 - add naming function on the basis of the example
 #### v2
-- a simple login function
+- a simple ostensible login function..
 - using a ready-made webpage..
