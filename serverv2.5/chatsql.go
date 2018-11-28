@@ -71,9 +71,9 @@ func Rfromsql(ms []byte) []byte {
 			stmt, _ := db.Prepare("INSERT INTO chatting.clientslist(id,name,password)VALUES(?,?,?)")
 			defer stmt.Close()
 			stmt.Exec(id+1, c[0], c[1])
-			return []byte(c[0] + " joins us.\\(^v^)/")
+			return []byte(c[0] + " joins us!\\(^v^)/")
 		}
-		return []byte("!Ghostisok")
+		return []byte("Attention!!No blank password!@(#*w*)@")
 	default:
 		return []byte("!Ghostisok")
 	}
