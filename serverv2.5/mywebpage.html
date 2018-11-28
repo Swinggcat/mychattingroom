@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>mychattingroom</title>
+<div id="name" hidden="hidden">Ghost</div><div id="inreq" hidden="hidden"></div>
+<script type="text/javascript">
+window.onload = function () {
+    var conn;
+    var msg = document.getElementById("msg");
+    var log = document.getElementById("log");
+	var name = document.getElementById("name");
+	var inreq = document.getElementById("inreq");
+
+    function appendLog(item) {
+        var doScroll = log.scrollTop > log.scrollHeight - log.clientHeight - 1;
+        log.appendChild(item);
+        if (doScroll) {
+            log.scrollTop = log.scrollHeight - log.clientHeight;
+        }
+    }
+	function rec(evt) {
+		if (evt.data[0] != '!'){
+        	var messages = evt.data.split('\n');
+        	for (var i = 0; i < messages.length; i++) {
+           	 var item = document.createElement("div");
+           	 item.innerText = messages[i];
+          	 appendLog(item);
+        	}
+		}
+    }
+	function login(){
+		document.getElementById("send").type="hidden"
+		conn.onmessage = function (evt) {
+            	var messages = evt.data;
+				if(messages=="!Ghostisok"){
+					alert("Found no user");
+					document.getElementById("send").type="submit"
+					conn.onmessage = function(evt){rec(evt)};
+				}else if(messages=="!"+inreq.innerHTML + "isok"){
+					conn.onmessage = function(evt){
+						var messages = evt.data;
+						if (messages=="!"+inreq.innerHTML + "isok"){
+							name.innerHTML=inreq.innerHTML;
+							alert(inreq.innerHTML+" log in.");
+							document.getElementById("send").type="submit"
+							conn.onmessage = function(evt){rec(evt)};
+							conn.send("@"+"Welcome "+inreq.innerHTML+" @(^v^)@")
+						}else if(messages=="!"+inreq.innerHTML+"isnotok"){
+							conn.send("%"+inreq.innerHTML+"%"+prompt("re:password:"));
+						}
+					};
+					conn.send("%"+inreq.innerHTML+"%"+prompt("password:"));
+				}
+        	};
+	}
+	
+    document.getElementById("form").onsubmit = function () {
+        if (!conn) {
+            return false;
+        }
+        if (!msg.value) {
+            return false;
+        }
+        conn.send("@"+name.innerHTML+":"+msg.value);
+        msg.value = "";
+        return false;
+    };
+	document.getElementById("login").onclick = function () {
+		var user=prompt("Username:")
+        if (!conn) {
+            return false;
+        }
+        if (!user) {
+			inreq.innerHTML="Ghost";
+			login();
+			conn.send("#");
+        }else{
+			inreq.innerHTML=user;
+			login();
+			conn.send("#"+inreq.innerHTML);
+
+		}
+        return false;
+    };
+	document.getElementById("logup").onclick = function(){
+        if (!conn) {
+            return false;
+        }
+		alert("dd");
+		var reg=new RegExp("^[A-z0-9]+$");
+		var n=prompt("Naming:");
+		var p=prompt("set password:");
+		var pc=prompt("repeat password:");
+		if (reg.test(n) && reg.test(n) && p==pc){
+			conn.send("?"+n+"@"+p);
+		}else{
+			alert("only number and alpha,the second entry must match the first.");
+		}
+		return false;
+	};
+
+    if (window["WebSocket"]) {
+        conn = new WebSocket("ws://" + document.location.host + "/ws");
+        conn.onclose = function (evt) {
+            var item = document.createElement("div");
+            item.innerHTML = "<b>Connection closed.</b>";
+            appendLog(item);
+        };
+        conn.onmessage = function(evt){rec(evt)};
+    } else {
+        var item = document.createElement("div");
+        item.innerHTML = "<b>Your browser does not support WebSockets.</b>";
+        appendLog(item);
+    }
+};
+</script>
+<style type="text/css">
+html {
+    overflow: hidden;
+}
+
+body {
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    background: gray;
+}
+
+#log {
+    background: white;
+    margin: 0;
+    padding: 0.5em 0.5em 0.5em 0.5em;
+    position: absolute;
+    top: 0.5em;
+    left: 0.5em;
+    right: 0.5em;
+    bottom: 3em;
+    overflow: auto;
+}
+
+#form {
+    padding: 0 0.5em 0 0.5em;
+    margin: 0;
+    position: absolute;
+    bottom: 1em;
+    left: 0px;
+    width: 100%;
+    overflow: hidden;
+}
+
+</style>
+</head>
+<body>
+<div id="log"></div>
+<form id="form">
+    <input id="send" type="submit" value="Send" />
+    <input type="text" id="msg" size="64"/>
+	<input id="login" type="button" value="login" />
+	<input id="logup" type="button" value="logup" />
+</form>
+</body>
+</html>
