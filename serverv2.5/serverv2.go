@@ -85,8 +85,9 @@ func (c *Client) cread() {
 			break
 		}
 		message = bytes.TrimSpace(bytes.Replace(message, []byte{'\n'}, []byte{' '}, -1)) //?
-		fmt.Println(string(Rfromsql(message)))
-		c.serv.broadcast <- Rfromsql(message)
+		midmessage := Rfromsql(message)
+		fmt.Println(string(midmessage))
+		c.serv.broadcast <- midmessage
 	}
 }
 
