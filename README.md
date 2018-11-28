@@ -14,3 +14,6 @@ learner's project
 #### v2
 - a simple ostensible login function..
 - using a ready-made webpage..
+#### v2.5
+- a simple ostensible logup function..
+- bug repair
